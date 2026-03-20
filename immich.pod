@@ -1,0 +1,13 @@
+# immich.pod
+# 配置場所: ~/.config/containers/systemd/immich.pod
+#
+# ★ マークの行が環境に応じて変更が必要な箇所です
+
+[Pod]
+PodName=immich
+# ★ ポート番号（ホスト側:コンテナ側）
+#      例) 8080:2283 → http://hostname:8080 でアクセス
+PublishPort=2283:2283
+
+[Install]
+WantedBy=default.target

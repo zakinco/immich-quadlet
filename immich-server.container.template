@@ -1,0 +1,54 @@
+# immich-server.container
+# 自動生成ファイル。編集は immich-secret.env と *.template ファイルで行う。
+#
+# ★ マークの行が環境に応じて変更が必要な箇所です
+
+[Unit]
+Description=Immich Server
+After=immich-redis.service immich-database.service
+Requires=immich-redis.service immich-database.service
+
+[Container]
+# ★ イメージバージョン
+#      release = 最新安定版
+#      v2.5.6  = バージョン固定（例）
+Image=ghcr.io/immich-app/immich-server:release
+
+ContainerName=immich_server
+Pod=immich.pod
+
+# ★ ボリューム（install.sh によって immich-secret.env の値が埋め込まれる）
+Volume=__UPLOAD_LOCATION__:/usr/src/app/upload
+Volume=__EXTERNAL_PATH__:/usr/src/app/external:ro
+Volume=/etc/localtime:/etc/localtime:ro
+
+# ★ タイムゾーン
+Environment=TZ=Asia/Tokyo
+
+# データベース接続（immich-database.container の POSTGRES_* と合わせること）
+Environment=DB_HOSTNAME=localhost
+Environment=DB_PORT=5432
+Environment=DB_USERNAME=postgres
+# ★ パスワード（install.sh によって immich-secret.env の値が埋め込まれる）
+Environment=DB_PASSWORD=__DB_PASSWORD__
+Environment=DB_DATABASE_NAME=immich
+
+# Redis接続
+Environment=REDIS_HOSTNAME=localhost
+Environment=REDIS_PORT=6379
+
+# 機械学習サービス接続先
+Environment=IMMICH_MACHINE_LEARNING_URL=http://localhost:3003
+
+HealthCmd=curl --fail http://localhost:2283/api/server/ping || exit 1
+HealthStartPeriod=1m
+HealthInterval=30s
+HealthTimeout=10s
+HealthRetries=3
+
+[Service]
+Restart=always
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target

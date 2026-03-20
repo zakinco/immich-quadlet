@@ -1,0 +1,26 @@
+# immich-redis.container
+# 配置場所: ~/.config/containers/systemd/immich-redis.container
+#
+# ※ immich-server.container の REDIS_HOSTNAME=localhost と対応
+
+[Unit]
+Description=Immich Redis (Valkey)
+After=immich-pod.service
+
+[Container]
+Image=docker.io/valkey/valkey:8-bookworm
+
+ContainerName=immich_redis
+Pod=immich.pod
+
+HealthCmd=redis-cli ping || exit 1
+HealthStartPeriod=30s
+HealthInterval=30s
+HealthTimeout=5s
+HealthRetries=3
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target

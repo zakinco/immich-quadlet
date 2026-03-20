@@ -1,0 +1,36 @@
+# immich-machine-learning.container
+# 配置場所: ~/.config/containers/systemd/immich-machine-learning.container
+#
+# ★ マークの行が環境に応じて変更が必要な箇所です
+
+[Unit]
+Description=Immich Machine Learning
+After=immich-pod.service
+
+[Container]
+# ★ イメージバージョン（immich-server.container と合わせること）
+#      release = 最新安定版
+#      v2.5.6  = バージョン固定（例）
+Image=ghcr.io/immich-app/immich-machine-learning:release
+
+ContainerName=immich_machine_learning
+Pod=immich.pod
+
+# モデルキャッシュ（初回ダウンロード後は再ダウンロード不要）
+Volume=immich-model-cache:/cache
+
+# ★ タイムゾーン
+Environment=TZ=Asia/Tokyo
+
+HealthCmd=curl --fail http://localhost:3003/ping || exit 1
+HealthStartPeriod=2m
+HealthInterval=30s
+HealthTimeout=10s
+HealthRetries=3
+
+[Service]
+Restart=always
+TimeoutStartSec=300
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,10 @@
+# immich-model-cache.volume
+# 配置場所: ~/.config/containers/systemd/immich-model-cache.volume
+#
+# ※ 削除するとモデルの再ダウンロードが必要になる
+
+[Volume]
+VolumeName=immich-model-cache
+
+[Install]
+WantedBy=default.target

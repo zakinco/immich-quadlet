@@ -1,0 +1,48 @@
+# immich-database.container
+# 自動生成ファイル。編集は immich-secret.env と *.template ファイルで行う。
+
+[Unit]
+Description=Immich Database (PostgreSQL + VectorChord)
+After=immich-pod.service
+
+[Container]
+# ★ イメージバージョン
+#      Immichのリリースノートに合わせて変更する
+Image=ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+
+ContainerName=immich_postgres
+Pod=immich.pod
+
+# ★ ボリューム（install.sh によって immich-secret.env の値が埋め込まれる）
+#      ※ ネットワーク共有（NFS等）は不可
+Volume=__DB_DATA_LOCATION__:/var/lib/postgresql/data
+
+# ★ パスワード（install.sh によって immich-secret.env の値が埋め込まれる）
+#      immich-server.container の DB_PASSWORD と合わせること
+Environment=POSTGRES_PASSWORD=__POSTGRES_PASSWORD__
+Environment=POSTGRES_USER=postgres
+Environment=POSTGRES_DB=immich
+Environment=POSTGRES_INITDB_ARGS=--data-checksums
+
+# vectors.so  : pgvecto.rs（後方互換のため残す）
+# vchord      : VectorChord（Immich v2.5以降で必須）
+Exec=postgres \
+  -c shared_preload_libraries=vectors.so,vchord \
+  -c 'search_path="$$user", public, vectors' \
+  -c logging_collector=on \
+  -c max_wal_size=2GB \
+  -c shared_buffers=512MB \
+  -c wal_compression=on
+
+HealthCmd=pg_isready --dbname=immich --username=postgres || exit 1
+HealthStartPeriod=2m
+HealthInterval=5m
+HealthTimeout=10s
+HealthRetries=3
+
+[Service]
+Restart=always
+TimeoutStartSec=120
+
+[Install]
+WantedBy=default.target
