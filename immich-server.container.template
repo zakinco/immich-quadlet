@@ -7,6 +7,9 @@
 Description=Immich Server
 After=immich-redis.service immich-database.service
 Requires=immich-redis.service immich-database.service
+# DBやRedisの起動完了を待つためのリトライ設定
+StartLimitIntervalSec=300
+StartLimitBurst=10
 
 [Container]
 # ★ イメージバージョン
@@ -49,10 +52,7 @@ HealthRetries=3
 [Service]
 Restart=always
 TimeoutStartSec=300
-# DBやRedisの起動完了を待つためのリトライ設定
 RestartSec=10s
-StartLimitIntervalSec=300
-StartLimitBurst=10
 
 [Install]
 WantedBy=default.target
