@@ -136,4 +136,4 @@ systemctl --user start immich-pod.service
 - `immich-secret.env` は `.gitignore` に含まれており、GitHubには公開されません
 - `DB_PASSWORD` と `POSTGRES_PASSWORD` は必ず同じ値にしてください
 - `DB_DATA_LOCATION` にネットワーク共有（NFS等）は使用できません
-- Podman 4.5以降が必要です
+- Podman 6.0.0-dev用です。
