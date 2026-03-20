@@ -20,7 +20,7 @@
 ### 1. リポジトリのクローン
 
 ```bash
-git clone https://github.com/yourname/immich-quadlet.git
+git clone https://github.com/zakinco/immich-quadlet.git
 cd immich-quadlet
 ```
 
